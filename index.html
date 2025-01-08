@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Volcanic Activity Map</title>
+    <title>Global Volcanic Activity</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -97,7 +97,7 @@
     </style>
 </head>
 <body>
-    <h1>Global Volcanic Activity Map</h1>
+    <h1>Global Volcanic Activity</h1>
     
     <!-- Filter controls -->
     <div class="controls">
@@ -153,6 +153,7 @@
 
     <!-- Leaflet JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    
     <!-- PapaParse for CSV parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
@@ -160,7 +161,7 @@
         // Initialize the map
         const map = L.map('map').setView([20, 0], 2);
 
-        // Add OpenStreetMap tiles
+        // Add Open street map
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
@@ -185,14 +186,14 @@
                     default: return '#FF0000'; // Default red
                 }
             }
-            // Otherwise, use status colors
+            // If not, use status colors
             if (volcano.Status === 'Historical') return '#4169E1'; // Royal Blue
             if (volcano.Status === 'Holocene') return '#4BC0C0'; // Turquoise
             if (volcano.Status === 'Fumarolic') return '#9966FF'; // Purple
             return '#808080'; // Grey for unknown/other
         }
 
-        // Function to determine marker size based on elevation
+        // Determine marker size based on elevation
         function getMarkerSize(elevation) {
             if (!elevation) return 6;
             return Math.min(Math.max(elevation / 1000, 6), 12);
@@ -213,7 +214,7 @@
                 });
             });
 
-        // Function to populate filter dropdowns
+        // Function to create filter dropdowns
         function populateFilterOptions() {
             const countries = new Set();
             const types = new Set();
@@ -223,7 +224,7 @@
                 if (volcano.Type) types.add(volcano.Type);
             });
 
-            // Populate country filter
+            // Country filter
             const countrySelect = document.getElementById('country-filter');
             Array.from(countries).sort().forEach(country => {
                 const option = document.createElement('option');
@@ -232,7 +233,7 @@
                 countrySelect.appendChild(option);
             });
 
-            // Populate type filter
+            // Type filter
             const typeSelect = document.getElementById('type-filter');
             Array.from(types).sort().forEach(type => {
                 const option = document.createElement('option');
@@ -242,7 +243,7 @@
             });
         }
 
-        // Function to display volcanoes based on filters
+        // Function to show volcanoes based on filters
         function displayVolcanoes() {
             markersLayer.clearLayers();
             
@@ -256,7 +257,7 @@
             window.volcanoData.forEach(volcano => {
                 if (!volcano.Latitude || !volcano.Longitude) return;
                 
-                // Apply filters
+                // Apply the filters
                 if (statusFilter !== 'all' && volcano.Status !== statusFilter) return;
                 if (countryFilter !== 'all' && volcano.Country !== countryFilter) return;
                 if (typeFilter !== 'all' && volcano.Type !== typeFilter) return;
@@ -272,7 +273,7 @@
                     fillOpacity: 0.7
                 });
 
-                // Create detailed popup content
+                // Create popups
                 const popupContent = `
                     <strong>${volcano['Volcano Name'] || 'Unnamed'}</strong><br>
                     <strong>Country:</strong> ${volcano.Country || 'Unknown'}<br>
@@ -290,7 +291,7 @@
             });
         }
 
-        // Add event listeners for filters
+        // Add event listeners (filters)
         document.getElementById('status-filter').addEventListener('change', displayVolcanoes);
         document.getElementById('country-filter').addEventListener('change', displayVolcanoes);
         document.getElementById('type-filter').addEventListener('change', displayVolcanoes);
@@ -298,7 +299,7 @@
         document.getElementById('elevation-min').addEventListener('input', displayVolcanoes);
         document.getElementById('elevation-max').addEventListener('input', displayVolcanoes);
 
-        // Add legend
+        // Add a legend
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
@@ -308,8 +309,7 @@
                 <div class="legend-item"><span class="color-box" style="background: #4BC0C0"></span>Holocene</div>
                 <div class="legend-item"><span class="color-box" style="background: #9966FF"></span>Fumarolic</div>
                 <div class="legend-item"><span class="color-box" style="background: #808080"></span>Other</div>
-                <small>Marker size indicates elevation</small>
-                <small>Use VEI filter for eruption intensity</small>
+                <small>Use VEI filter for volcanic eruption intensity</small>
             `;
             return div;
         };
